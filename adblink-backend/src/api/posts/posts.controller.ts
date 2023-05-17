@@ -27,6 +27,7 @@ const fetchPosts = async (user: IUser) => {
 const fetchPost = async (payload: any, user: IUser) => {
   // Validate body...
   if (!(await YFindPost.isValid(payload))) {
+    // console.log({error: })
     throw new APIError(422, 'Validation failed...');
   }
 
@@ -41,8 +42,8 @@ const fetchPost = async (payload: any, user: IUser) => {
 
   const db = await database();
   const post = await db.collection(POSTS_COLLECTION).findOne({ _id, owner: user.email });
-
-  if (!post) {
+  console.log({ message: 'In Fetch Post', post });
+  if (post.length === 0) {
     throw new APIError(404, 'Post not found...');
   }
 
@@ -72,6 +73,7 @@ const deletePost = async (payload: any, user: IUser) => {
 const findPostWithCategory = async (category: string) => {
   const db = await database();
   const posts = await db.collection(POSTS_COLLECTION).find({ tags: category }).toArray();
+  console.log({ message: 'Find Post with category', posts });
   return posts[Math.floor(Math.random() * posts.length)];
 };
 

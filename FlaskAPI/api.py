@@ -8,7 +8,9 @@ app.config["DEBUG"] = True
 
 @app.route('/', methods=['GET'])
 def home():
+	print("In main Route")
 	if 'id' in request.args:
+		print(request.args)
 		id = request.args['id']
 		print("id", id)
 		ctext = clean_text(id)

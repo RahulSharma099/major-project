@@ -18,7 +18,7 @@ def clean_text(text):
   #   pass
   # else:
   #   ssl._create_default_https_context = _create_unverified_https_context
-  nltk.download('stopwords')
+  # nltk.download('stopwords')
   REPLACE_BY_SPACE_RE = re.compile('[/(){}\[\]\|@,;]')
   BAD_SYMBOLS_RE = re.compile('[^0-9a-z #+_]')
   STOPWORDS = set(stopwords.words('english'))
@@ -54,6 +54,10 @@ def ml(stry):
   from sklearn.feature_selection import chi2
   # uploaded=files.upload()
   # df = pd.read_csv(io.BytesIO(uploaded['ad.csv']))
+  print(stry)
+  print()
+  print("###################🛡️ Started Categorising 🛡️###################")
+  print()
   df = pd.read_csv('ad.csv')
   #print(df)
   df.drop(["Advertiser","Product_or_spot"],axis=1,inplace=True)
@@ -115,4 +119,7 @@ def ml(stry):
     unigrams = [v for v in reversed(feature_names) if len(v.split(' ')) == 1][:N]
     bigrams = [v for v in reversed(feature_names) if len(v.split(' ')) == 2][:N]
   x=clf.predict(count_vect.transform([stry]))
+
+  print("Value of x", x)
+
   return x

@@ -4,6 +4,7 @@ async function getCurrentTab() {
   return tab;
 }
 
+var maxSize = 1;
 var message = document.querySelector("#metaTable");
 
 getCurrentTab().then((tab) => {
@@ -26,7 +27,13 @@ chrome.runtime.onMessage.addListener(function (request, sender) {
   console.log({ request, aakash: "aakaah" });
   var metaTable = document.getElementById("metaTable");
   var str = "";
-  if (request.method == "getMetas") {
+  if (
+    request.method == "getMetas" &&
+    request.metas.length &&
+    request.metas.length > maxSize
+  ) {
+    maxSize = request.metas.length;
+    console.log({ maxSize });
     for (var i = 0; i < request.metas.length; i++) {
       if (
         request.metas[i][1] === "og:title" ||
@@ -40,6 +47,7 @@ chrome.runtime.onMessage.addListener(function (request, sender) {
       ) {
         console.log(request.metas[i][0]);
         str += request.metas[i][3];
+        console.log(str);
       }
       metaTable.innerHTML +=
         "<tr><td>" +
@@ -59,7 +67,11 @@ chrome.runtime.onMessage.addListener(function (request, sender) {
       .then((r) => r.text())
       .then((category) => {
         fetch(`http://localhost:5050/api/posts/${category}`)
-          .then((data) => data.json())
+          .then(async (data) => {
+            const d = await data.json();
+            console.log({ data: d, message: "In chrome popup.js" });
+            return d;
+          })
           .then(({ img, url }) => {
             const imageSrc =
               "https://finalyear2023.s3.ap-south-1.amazonaws.com/" + img;
@@ -77,7 +89,13 @@ chrome.runtime.onMessage.addListener(function (request, sender) {
                 );
               }
             );
+          })
+          .catch((err) => {
+            console.log({ err });
           });
+      })
+      .catch((e) => {
+        console.log({ message: "Error in chrome catch", error: e });
       });
   }
 });
